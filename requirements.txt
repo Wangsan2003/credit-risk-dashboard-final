@@ -1,0 +1,8 @@
+pandas
+numpy
+dash==2.15.0
+plotly
+scikit-learn
+xgboost
+imblearn
+gunicorn
