@@ -11,6 +11,7 @@ from imblearn.over_sampling import SMOTE
 import xgboost as xgb
 import dash
 from dash import dcc, html
+import warnings
 
 # --- 1. 数据准备与模型训练 (重现模块 1-6 的商业价值输出) ---
 
@@ -59,8 +60,6 @@ xgb_model = xgb.XGBClassifier(
     objective='binary:logistic', use_label_encoder=False, eval_metric='logloss',
     scale_pos_weight=ratio, random_state=42, n_estimators=200, max_depth=5
 )
-import warnings
-
 warnings.filterwarnings('ignore', category=UserWarning)
 xgb_model.fit(X_train, y_train)
 xgb_probs = xgb_model.predict_proba(X_test)[:, 1]
@@ -192,10 +191,13 @@ app.layout = html.Div(style={'backgroundColor': '#f0f2f5', 'padding': '20px', 'f
                                    children=[
                                        html.H3("I. 模型性能监控 (Module 5: 评估结果)",
                                                style={'textAlign': 'center', 'color': COLOR_ACCENT}),
-                                       html.P("衡量模型区分违约与非违约客户的有效性。",
+                                       html.P("目标：衡量模型区分违约与非违约客户的有效性，并评估其在实际业务场景中的实用价值。",
                                               style={'textAlign': 'center', 'color': '#7f8c8d'}),
                                        html.Div(className='twelve columns', children=[
-                                           dcc.Graph(figure=create_roc_pr_plots(y_test, xgb_probs, roc_auc))
+                                           dcc.Graph(figure=create_roc_pr_plots(y_test, xgb_probs, roc_auc)),
+                                           # 模块 I 说明
+                                           html.P("解读：AUC-ROC（0.7671）展示模型整体区分能力。PR曲线的AP值反映了模型在识别少数违约客户时的精确率和召回率，具有极高的业务实用性。", 
+                                                  style={'textAlign': 'center', 'color': '#7f8c8d', 'marginTop': '10px', 'fontStyle': 'italic'})
                                        ])
                                    ]),
 
@@ -206,10 +208,13 @@ app.layout = html.Div(style={'backgroundColor': '#f0f2f5', 'padding': '20px', 'f
                                    children=[
                                        html.H3("II. 违约用户画像与特征分布 (Module 3/4: EDA与衍生特征)",
                                                style={'textAlign': 'center', 'color': COLOR_ACCENT}),
-                                       html.P("识别高风险客户的群体特征：信用额度更低、教育程度和婚姻状态也有显著差异。",
+                                       html.P("目标：通过关键人口学特征和信用额度分布，描绘高风险违约客户的典型群体特征。",
                                               style={'textAlign': 'center', 'color': '#7f8c8d'}),
                                        html.Div(className='twelve columns', children=[
-                                           dcc.Graph(figure=create_user_profile_plots(df))
+                                           dcc.Graph(figure=create_user_profile_plots(df)),
+                                           # 模块 II 说明
+                                           html.P("解读：违约客户画像倾向于信用额度较低、学历为高中或以下，以及婚姻状态为单身的群体，为信审和营销提供风险细分依据。", 
+                                                  style={'textAlign': 'center', 'color': '#7f8c8d', 'marginTop': '10px', 'fontStyle': 'italic'})
                                        ])
                                    ]),
 
@@ -222,14 +227,25 @@ app.layout = html.Div(style={'backgroundColor': '#f0f2f5', 'padding': '20px', 'f
                                                style={'textAlign': 'center', 'color': COLOR_ACTION,
                                                       'borderBottom': '2px solid ' + COLOR_ACTION,
                                                       'paddingBottom': '10px'}),
-
+                                       
+                                       # 左侧：特征重要性图表及说明
                                        html.Div(className='six columns', children=[
-                                           dcc.Graph(figure=create_feature_importance_plot(top_10_xgb))
+                                           dcc.Graph(figure=create_feature_importance_plot(top_10_xgb)),
+                                           # 模块 III (左侧) 说明
+                                           html.P("解读：MAX_DELAY（最大延迟月数）是模型最重要的预测变量，其次是LIMIT_BAL。这验证了历史行为和财务能力对风险预测的主导地位，是风控关注的核心。", 
+                                                  style={'textAlign': 'center', 'color': '#7f8c8d', 'marginTop': '10px', 'fontStyle': 'italic'})
                                        ]),
 
+                                       # 右侧：核心洞察总结与业务建议
                                        html.Div(className='six columns',
                                                 style={'paddingTop': '20px', 'paddingLeft': '30px'}, children=[
-                                               html.H3("【最终业务行动建议】", style={'color': COLOR_HEADER}),
+                                               
+                                               html.H3("【核心洞察总结与业务建议】", style={'color': COLOR_HEADER, 'marginBottom': '15px'}),
+                                               html.P("综合模型性能、客户画像与特征重要性，得出以下最关键、可执行的业务建议：",
+                                                      style={'color': '#7f8c8d', 'fontSize': '1.1em', 'marginBottom': '10px'}),
+                                               html.H4("■ 最终业务行动建议 (Actionable Insights)", 
+                                                       style={'color': COLOR_ACTION, 'borderBottom': '1px dotted ' + COLOR_ACTION, 'paddingBottom': '5px'}),
+                                               
                                                html.Ul(style={'paddingLeft': '20px', 'lineHeight': '2.0',
                                                               'listStyleType': 'none'}, children=[
                                                    html.Li([
