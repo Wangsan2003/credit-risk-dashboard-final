@@ -164,7 +164,13 @@ def create_feature_importance_plot(importance_series):
 
 # --- 3. Dash 应用程序布局 (集成六个模块的商业价值) ---
 
-app = dash.Dash(__name__, external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'])
+# --- 【关键修改】添加 meta_tags 实现手机端响应式布局 ---
+app = dash.Dash(__name__, 
+    external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'],
+    meta_tags=[
+        {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0'}
+    ]
+)
 server = app.server
 COLOR_HEADER = '#2c3e50'
 COLOR_ACCENT = '#3498db'
