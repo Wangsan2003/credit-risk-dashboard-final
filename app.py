@@ -180,7 +180,12 @@ app.layout = html.Div(style={'backgroundColor': '#f0f2f5', 'padding': '20px', 'f
 
                           # 顶部标题区
                           html.H1("信用卡违约风险分析仪表盘：从数据到行动",
-                                  style={'textAlign': 'center', 'color': COLOR_HEADER, 'paddingBottom': '10px'}),
+                                  style={'textAlign': 'center', 'color': COLOR_HEADER, 'paddingBottom': '5px'}),
+                          
+                          # 【新增】个人署名
+                          html.P("项目作者：王三",
+                                 style={'textAlign': 'center', 'color': '#95a5a6', 'marginBottom': '10px', 'fontSize': '1.1em', 'fontWeight': 'bold'}),
+                                 
                           html.P(f"最佳预测模型：XGBoost | 测试集 AUC-ROC: {roc_auc:.4f}",
                                  style={'textAlign': 'center', 'color': '#34495e', 'marginBottom': '30px'}),
 
